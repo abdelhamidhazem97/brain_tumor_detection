@@ -1,38 +1,36 @@
 # 🧠 Brain Tumor Detection using Deep Learning
 
-## نظام كشف أورام المخ باستخدام التعلم العميق
-
-مشروع ذكاء اصطناعي متكامل لتصنيف صور MRI للمخ إلى 4 فئات:
-- **Glioma** (ورم دبقي)
-- **Meningioma** (ورم سحائي)
-- **No Tumor** (لا يوجد ورم)
-- **Pituitary** (ورم الغدة النخامية)
+A comprehensive AI project to classify MRI brain images into 4 categories:
+- **Glioma**
+- **Meningioma**
+- **No Tumor**
+- **Pituitary**
 
 ---
 
-## 📋 المحتويات
+## 📋 Table of Contents
 
-1. [متطلبات النظام](#متطلبات-النظام)
-2. [التثبيت](#التثبيت)
-3. [هيكل المشروع](#هيكل-المشروع)
-4. [التدريب](#التدريب)
-5. [تشغيل الواجهة](#تشغيل-الواجهة)
-6. [النتائج](#النتائج)
-7. [التقنيات المستخدمة](#التقنيات-المستخدمة)
+1. [System Requirements](#system-requirements)
+2. [Installation](#installation)
+3. [Project Structure](#project-structure)
+4. [Training](#training)
+5. [Running the Application](#running-the-application)
+6. [Expected Results](#expected-results)
+7. [Technologies Used](#technologies-used)
 
 ---
 
-## ⚙️ متطلبات النظام
+## ⚙️ System Requirements
 
 - Python 3.8+
-- NVIDIA GPU (مُستحسن للتدريب)
-- ذاكرة RAM: 8GB+ (مُستحسن 16GB)
+- NVIDIA GPU (Recommended for training)
+- RAM: 8GB+ (16GB recommended)
 
 ---
 
-## 🛠 التثبيت
+## 🛠 Installation
 
-### 1. إنشاء بيئة افتراضية
+### 1. Create a Virtual Environment
 ```bash
 python -m venv venv
 # Windows
@@ -41,90 +39,90 @@ venv\Scripts\activate
 source venv/bin/activate
 ```
 
-### 2. تثبيت المكتبات
+### 2. Install Dependencies
 ```bash
 pip install -r requirements.txt
 ```
 
-### 3. التأكد من وجود البيانات
-تأكد أن مجلد `brain_tumor_dataset/` موجود ويحتوي على:
+### 3. Verify Dataset
+Ensure the `brain_tumor_dataset/` directory exists and contains:
 ```
 brain_tumor_dataset/
 ├── Training/
-│   ├── glioma/       (1400 صورة)
-│   ├── meningioma/   (1400 صورة)
-│   ├── notumor/      (1400 صورة)
-│   └── pituitary/    (1400 صورة)
+│   ├── glioma/       (1400 images)
+│   ├── meningioma/   (1400 images)
+│   ├── notumor/      (1400 images)
+│   └── pituitary/    (1400 images)
 └── Testing/
-    ├── glioma/       (400 صورة)
-    ├── meningioma/   (400 صورة)
-    ├── notumor/      (400 صورة)
-    └── pituitary/    (400 صورة)
+    ├── glioma/       (400 images)
+    ├── meningioma/   (400 images)
+    ├── notumor/      (400 images)
+    └── pituitary/    (400 images)
 ```
 
 ---
 
-## 📁 هيكل المشروع
+## 📁 Project Structure
 
 ```
 cancer-detection-ai/
-├── brain_tumor_dataset/     # بيانات التدريب والاختبار
-├── models/                  # النماذج المدربة
+├── brain_tumor_dataset/     # Training and testing dataset
+├── models/                  # Trained models
 │   └── brain_tumor_model.h5
-├── templates/               # واجهة الويب
+├── templates/               # Web interface templates
 │   └── index.html
-├── brain_tumor_detection.ipynb  # النوتبوك الرئيسي (التدريب والتحليل)
-├── app.py                   # تطبيق Flask للواجهة
-├── requirements.txt         # المكتبات المطلوبة
-└── README.md               # هذا الملف
+├── brain_tumor_detection.ipynb  # Main notebook (Training & Analysis)
+├── app.py                   # Flask web application
+├── requirements.txt         # Required Python packages
+└── README.md               # This file
 ```
 
 ---
 
-## 🎓 التدريب
+## 🎓 Training
 
-### تشغيل النوتبوك
+### Running the Notebook
 ```bash
 jupyter notebook brain_tumor_detection.ipynb
 ```
 
-النوتبوك يتضمن:
-1. **استيراد المكتبات** - كل المكتبات اللازمة
-2. **تحميل وتجهيز البيانات** - قراءة الصور وتطبيعها
-3. **استكشاف البيانات (EDA)** - رسوم بيانية وإحصائيات
-4. **بناء النموذج** - باستخدام TensorFlow/Keras مع Transfer Learning (VGG16)
-5. **التدريب** - مع تقنيات منع الإفراط في التعلم
-6. **التقييم** - مصفوفة الارتباك والتقرير المفصل
-7. **حفظ النموذج** - لاستخدامه في الواجهة
+The notebook includes:
+1. **Importing Libraries** - All necessary modules
+2. **Data Loading & Preprocessing** - Reading and normalizing images
+3. **Exploratory Data Analysis (EDA)** - Charts and statistics
+4. **Model Building** - Using TensorFlow/Keras with Transfer Learning (VGG16)
+5. **Training** - With techniques to prevent overfitting
+6. **Evaluation** - Confusion matrix and detailed classification report
+7. **Model Saving** - For use in the web application
 
-### خطوات التدريب:
-- يستخدم **VGG16** كنموذج أساسي (Transfer Learning)
-- **Data Augmentation** لزيادة حجم بيانات التدريب
-- **Early Stopping** لمنع الإفراط في التعلم
-- **Learning Rate Scheduling** لتحسين التدريب
-- حجم الصورة: 224×224 بكسل
+### Training Strategies:
+- Uses **VGG16** as a base model (Transfer Learning)
+- **Data Augmentation** to increase training data size
+- **Early Stopping** to prevent overfitting
+- **Learning Rate Scheduling** for optimal training convergence
+- Image Size: 224×224 pixels
 
 ---
 
-## 🌐 تشغيل الواجهة
+## 🌐 Running the Application
 
 ```bash
 python app.py
 ```
 
-ثم افتح المتصفح على: [http://localhost:5000](http://localhost:5000)
+Then open your browser at: [http://localhost:5000](http://localhost:5000)
 
-### مميزات الواجهة:
-- 🖱 سحب وإفلات الصور
-- 📊 عرض نسب الثقة لكل فئة
-- 🎨 تصميم عصري ومتجاوب
-- 🌙 وضع داكن
+### Interface Features:
+- 🖱 Drag and drop images
+- 📊 Confidence scores for each category
+- 🎨 Modern and responsive design
+- 🌙 Dark mode support
 
 ---
 
-## 📊 النتائج المتوقعة
+## 📊 Expected Results
 
-| المقياس | القيمة المتوقعة |
+| Metric | Expected Value |
 |---------|-----------------|
 | Accuracy | ~95%+ |
 | Precision | ~94%+ |
@@ -133,29 +131,29 @@ python app.py
 
 ---
 
-## 🔧 التقنيات المستخدمة
+## 🔧 Technologies Used
 
-| التقنية | الاستخدام |
+| Technology | Usage |
 |---------|-----------|
-| Python 3.x | لغة التطوير |
-| TensorFlow / Keras | بناء وتدريب النموذج |
+| Python 3.x | Programming Language |
+| TensorFlow / Keras | Model Building & Training |
 | VGG16 | Transfer Learning |
-| Flask | واجهة الويب |
-| OpenCV | معالجة الصور |
-| NumPy / Pandas | معالجة البيانات |
-| Matplotlib / Seaborn | الرسوم البيانية |
-| Scikit-learn | مقاييس التقييم |
+| Flask | Web Interface |
+| OpenCV | Image Processing |
+| NumPy / Pandas | Data Manipulation |
+| Matplotlib / Seaborn | Data Visualization |
+| Scikit-learn | Evaluation Metrics |
 
 ---
 
-## 📝 ملاحظات
+## 📝 Notes
 
-- هذا المشروع لأغراض تعليمية وبحثية فقط
-- لا يُستخدم كبديل عن التشخيص الطبي المتخصص
-- يجب استشارة طبيب متخصص لأي تشخيص طبي حقيقي
+- This project is for educational and research purposes only.
+- It should not be used as a substitute for professional medical diagnosis.
+- Always consult a specialist for real medical diagnoses.
 
 ---
 
-## 📜 الترخيص
+## 📜 License
 
-هذا المشروع مرخص للاستخدام التعليمي والبحثي.
+This project is licensed for educational and research use.

@@ -14,7 +14,7 @@ cells = []
 
 # ---- Section 0 (Colab Setup) ----
 cells.append(md("## 0. Colab Setup (Mount Google Drive & Extract Dataset)"))
-cells.append(md("### طريقة التشغيل على Colab:\n1. قم بضغط المجلد `brain_tumor_dataset` الموجود في جهازك إلى ملف بصيغة `zip` (تأكد أن اسمه `brain_tumor_dataset.zip`).\n2. قم برفع الملف `brain_tumor_dataset.zip` إلى حسابك في **Google Drive** (في المجلد الرئيسي).\n3. قم بتشغيل الخلية التالية لربط حساب Google Drive وفك ضغط البيانات."))
+cells.append(md("### How to run on Colab:\n1. Compress the `brain_tumor_dataset` directory on your local machine to a `zip` file (ensure it is named `brain_tumor_dataset.zip`).\n2. Upload `brain_tumor_dataset.zip` to your **Google Drive** (in the root directory).\n3. Run the following cell to mount your Google Drive and extract the dataset."))
 cells.append(code([
     "## Mount Google Drive\n",
     "import os\n",
@@ -372,7 +372,7 @@ cells.append(code([
     "    drive_model_path = os.path.join(drive_model_dir, 'brain_tumor_model.h5')\n",
     "    shutil.copy('models/brain_tumor_model.h5', drive_model_path)\n",
     "    print(f'\\n✅ Model safely copied to Google Drive at: {drive_model_path}')\n",
-    "    print('👉 الآن يمكنك تحميل الموديل من جوجل درايف ووضعه في مجلد models لتشغيل الـ Web App')\n",
+    "    print('👉 You can now download the model from Google Drive and place it in the models directory to run the Web App')\n",
     "\n",
     "print(f'\\nFinal Test Accuracy: {test_accuracy*100:.2f}%')\n",
     "print('To run web interface locally: python app.py')"

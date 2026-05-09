@@ -1,11 +1,11 @@
 """
 Brain Tumor Detection - Web Application
 ========================================
-واجهة ويب بسيطة لرفع صور MRI وتصنيفها باستخدام نموذج Deep Learning.
+A simple web interface to upload MRI images and classify them using a Deep Learning model.
 
-الاستخدام:
+Usage:
     python app.py
-ثم افتح المتصفح على http://localhost:5000
+Then open your browser at http://localhost:5000
 """
 
 import os
@@ -31,7 +31,7 @@ CLASS_NAMES = ['Glioma', 'Meningioma', 'No Tumor', 'Pituitary']
 model = None
 
 def get_model():
-    """تحميل النموذج المدرب - يتم تحميله مرة واحدة فقط"""
+    """Load the trained model - loaded only once"""
     global model
     if model is None:
         if os.path.exists(MODEL_PATH):
@@ -44,9 +44,9 @@ def get_model():
 
 def preprocess_image(image_bytes):
     """
-    تجهيز الصورة للتنبؤ
-    - تحويل الحجم إلى 224x224
-    - تطبيع القيم بين 0 و 1
+    Prepare the image for prediction
+    - Resize to 224x224
+    - Normalize values between 0 and 1
     """
     img = Image.open(io.BytesIO(image_bytes))
     img = img.convert('RGB')
@@ -58,10 +58,10 @@ def preprocess_image(image_bytes):
 
 def predict_tumor(image_bytes):
     """
-    التنبؤ بنوع الورم من صورة MRI
+    Predict the type of tumor from an MRI image
     
-    المدخلات: بيانات الصورة بالبايت
-    المخرجات: قاموس يحتوي على التصنيف ونسبة الثقة
+    Inputs: image bytes
+    Outputs: dictionary containing the classification and confidence percentage
     """
     loaded_model = get_model()
     if loaded_model is None:
@@ -87,12 +87,12 @@ def predict_tumor(image_bytes):
 # ==============================
 @app.route('/')
 def index():
-    """الصفحة الرئيسية"""
+    """Home Page"""
     return render_template('index.html')
 
 @app.route('/predict', methods=['POST'])
 def predict():
-    """نقطة نهاية التنبؤ - تستقبل صورة وترجع التصنيف"""
+    """Prediction Endpoint - receives an image and returns the classification"""
     if 'file' not in request.files:
         return jsonify({"error": "No file uploaded"}), 400
     
@@ -100,7 +100,7 @@ def predict():
     if file.filename == '':
         return jsonify({"error": "No file selected"}), 400
     
-    # التحقق من نوع الملف
+    # Check file type
     allowed_extensions = {'png', 'jpg', 'jpeg', 'gif', 'bmp', 'tiff'}
     ext = file.filename.rsplit('.', 1)[-1].lower() if '.' in file.filename else ''
     if ext not in allowed_extensions:
@@ -115,7 +115,7 @@ def predict():
 
 @app.route('/health')
 def health():
-    """فحص صحة التطبيق"""
+    """Application Health Check"""
     model_loaded = get_model() is not None
     return jsonify({
         "status": "healthy",
