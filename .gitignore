@@ -38,8 +38,6 @@ MANIFEST
 .vscode/
 
 # Project specific
-brain_tumor_dataset/
-models/
 
 # MacOS
 .DS_Store
