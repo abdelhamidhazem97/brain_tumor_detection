@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brain Tumor Detection - كشف أورام المخ</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0c0c1d 0%, #1a1a3e 50%, #0d0d2b 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .header {
+            text-align: center;
+            padding: 40px 20px 20px;
+            width: 100%;
+            max-width: 900px;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(90deg, #00d4ff, #7b2ff7, #ff6bcb);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            color: #a0a0c0;
+            font-size: 1.1rem;
+        }
+        
+        .main-container {
+            width: 100%;
+            max-width: 900px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+        
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 32px rgba(123, 47, 247, 0.15);
+        }
+        
+        .upload-zone {
+            border: 2px dashed rgba(123, 47, 247, 0.4);
+            border-radius: 16px;
+            padding: 50px 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .upload-zone:hover, .upload-zone.dragover {
+            border-color: #7b2ff7;
+            background: rgba(123, 47, 247, 0.08);
+        }
+        
+        .upload-zone .icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+        
+        .upload-zone h3 {
+            font-size: 1.3rem;
+            margin-bottom: 8px;
+            color: #fff;
+        }
+        
+        .upload-zone p {
+            color: #a0a0c0;
+            font-size: 0.95rem;
+        }
+        
+        .upload-zone input[type="file"] {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+        
+        .preview-container {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .preview-container img {
+            max-width: 300px;
+            max-height: 300px;
+            border-radius: 12px;
+            border: 2px solid rgba(123, 47, 247, 0.3);
+            object-fit: cover;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 14px 40px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #7b2ff7, #00d4ff);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 20px rgba(123, 47, 247, 0.4);
+        }
+        
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .result-container {
+            display: none;
+        }
+        
+        .result-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .result-header .status-icon {
+            font-size: 2.5rem;
+        }
+        
+        .result-header .result-text h2 {
+            font-size: 1.5rem;
+            color: #fff;
+        }
+        
+        .result-header .result-text p {
+            color: #a0a0c0;
+        }
+        
+        .confidence-bars {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .confidence-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .confidence-item .label {
+            width: 120px;
+            font-weight: 500;
+            text-align: left;
+            font-size: 0.95rem;
+        }
+        
+        .confidence-item .bar-bg {
+            flex: 1;
+            height: 28px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 14px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .confidence-item .bar-fill {
+            height: 100%;
+            border-radius: 14px;
+            transition: width 1s ease;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 10px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        
+        .bar-glioma { background: linear-gradient(90deg, #ff6b6b, #ee5a24); }
+        .bar-meningioma { background: linear-gradient(90deg, #ffa502, #ff6348); }
+        .bar-notumor { background: linear-gradient(90deg, #2ed573, #7bed9f); }
+        .bar-pituitary { background: linear-gradient(90deg, #1e90ff, #70a1ff); }
+        
+        .highlight { box-shadow: 0 0 12px rgba(255, 255, 255, 0.3); }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 30px;
+        }
+        
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(123, 47, 247, 0.2);
+            border-top-color: #7b2ff7;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 15px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .error-msg {
+            color: #ff6b6b;
+            background: rgba(255, 107, 107, 0.1);
+            border: 1px solid rgba(255, 107, 107, 0.3);
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 15px;
+            display: none;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 30px;
+            color: #666;
+            font-size: 0.85rem;
+        }
+        
+        @media (max-width: 600px) {
+            .header h1 { font-size: 1.8rem; }
+            .card { padding: 20px; }
+            .upload-zone { padding: 30px 15px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>🧠 Brain Tumor Detection</h1>
+    <p>نظام ذكاء اصطناعي للكشف عن أورام المخ من صور MRI</p>
+    <p style="font-size: 0.85rem; color: #777; margin-top: 5px;">
+        يدعم تصنيف: Glioma | Meningioma | No Tumor | Pituitary
+    </p>
+</div>
+
+<div class="main-container">
+    
+    <!-- Upload Card -->
+    <div class="card">
+        <div class="upload-zone" id="uploadZone">
+            <div class="icon">📤</div>
+            <h3>ارفع صورة MRI للمخ</h3>
+            <p>اسحب الصورة هنا أو اضغط لاختيار ملف</p>
+            <p style="font-size: 0.8rem; margin-top: 8px; color: #888;">
+                الصيغ المدعومة: JPG, PNG, BMP, TIFF
+            </p>
+            <input type="file" id="fileInput" accept="image/*">
+        </div>
+        
+        <div class="preview-container" id="previewContainer">
+            <img id="previewImage" src="" alt="Preview">
+            <br>
+            <button class="btn btn-primary" id="predictBtn" onclick="predict()">
+                🔍 تحليل الصورة
+            </button>
+        </div>
+        
+        <div class="error-msg" id="errorMsg"></div>
+    </div>
+    
+    <!-- Loading -->
+    <div class="loading" id="loadingSection">
+        <div class="spinner"></div>
+        <p>جاري التحليل باستخدام نموذج Deep Learning...</p>
+    </div>
+    
+    <!-- Result Card -->
+    <div class="card result-container" id="resultContainer">
+        <div class="result-header">
+            <span class="status-icon" id="statusIcon">🔬</span>
+            <div class="result-text">
+                <h2 id="resultClass">-</h2>
+                <p id="resultConfidence">نسبة الثقة: -</p>
+            </div>
+        </div>
+        
+        <div class="confidence-bars" id="confidenceBars">
+            <!-- Filled dynamically -->
+        </div>
+    </div>
+    
+</div>
+
+<div class="footer">
+    <p>Brain Tumor Detection System | Powered by TensorFlow & Deep Learning</p>
+</div>
+
+<script>
+const uploadZone = document.getElementById('uploadZone');
+const fileInput = document.getElementById('fileInput');
+const previewContainer = document.getElementById('previewContainer');
+const previewImage = document.getElementById('previewImage');
+const predictBtn = document.getElementById('predictBtn');
+const loadingSection = document.getElementById('loadingSection');
+const resultContainer = document.getElementById('resultContainer');
+const errorMsg = document.getElementById('errorMsg');
+
+let selectedFile = null;
+
+// Drag & Drop
+uploadZone.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    uploadZone.classList.add('dragover');
+});
+
+uploadZone.addEventListener('dragleave', () => {
+    uploadZone.classList.remove('dragover');
+});
+
+uploadZone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    uploadZone.classList.remove('dragover');
+    if (e.dataTransfer.files.length > 0) {
+        handleFile(e.dataTransfer.files[0]);
+    }
+});
+
+fileInput.addEventListener('change', (e) => {
+    if (e.target.files.length > 0) {
+        handleFile(e.target.files[0]);
+    }
+});
+
+function handleFile(file) {
+    selectedFile = file;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        previewImage.src = e.target.result;
+        previewContainer.style.display = 'block';
+        resultContainer.style.display = 'none';
+        errorMsg.style.display = 'none';
+    };
+    reader.readAsDataURL(file);
+}
+
+async function predict() {
+    if (!selectedFile) return;
+    
+    predictBtn.disabled = true;
+    loadingSection.style.display = 'block';
+    resultContainer.style.display = 'none';
+    errorMsg.style.display = 'none';
+    
+    const formData = new FormData();
+    formData.append('file', selectedFile);
+    
+    try {
+        const response = await fetch('/predict', { method: 'POST', body: formData });
+        const data = await response.json();
+        
+        if (data.error) {
+            errorMsg.textContent = '⚠️ ' + data.error;
+            errorMsg.style.display = 'block';
+        } else {
+            displayResult(data);
+        }
+    } catch (err) {
+        errorMsg.textContent = '⚠️ حدث خطأ أثناء التحليل: ' + err.message;
+        errorMsg.style.display = 'block';
+    } finally {
+        predictBtn.disabled = false;
+        loadingSection.style.display = 'none';
+    }
+}
+
+function displayResult(data) {
+    const statusIcon = document.getElementById('statusIcon');
+    const resultClass = document.getElementById('resultClass');
+    const resultConfidence = document.getElementById('resultConfidence');
+    const confidenceBars = document.getElementById('confidenceBars');
+    
+    // Set icon based on result
+    const icons = {
+        'No Tumor': '✅',
+        'Glioma': '⚠️',
+        'Meningioma': '⚠️',
+        'Pituitary': '⚠️'
+    };
+    
+    statusIcon.textContent = icons[data.class] || '🔬';
+    resultClass.textContent = `التصنيف: ${data.class}`;
+    resultConfidence.textContent = `نسبة الثقة: ${data.confidence}%`;
+    
+    // Build confidence bars
+    const barClasses = {
+        'Glioma': 'bar-glioma',
+        'Meningioma': 'bar-meningioma',
+        'No Tumor': 'bar-notumor',
+        'Pituitary': 'bar-pituitary'
+    };
+    
+    let barsHTML = '';
+    for (const [cls, pct] of Object.entries(data.all_predictions)) {
+        const barClass = barClasses[cls] || 'bar-notumor';
+        const isHighlight = cls === data.class ? 'highlight' : '';
+        barsHTML += `
+            <div class="confidence-item">
+                <span class="label">${cls}</span>
+                <div class="bar-bg">
+                    <div class="bar-fill ${barClass} ${isHighlight}" style="width: ${pct}%">
+                        ${pct > 10 ? pct + '%' : ''}
+                    </div>
+                </div>
+                <span style="width:50px; text-align:right; font-size:0.9rem;">${pct}%</span>
+            </div>
+        `;
+    }
+    confidenceBars.innerHTML = barsHTML;
+    resultContainer.style.display = 'block';
+}
+</script>
+
+</body>
+</html>
